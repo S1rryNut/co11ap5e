@@ -1,0 +1,78 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        http-only: true
+
+spring:
+  application:
+    name: personal-site
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://127.0.0.1:5432/personal_site}
+    username: ${DB_USERNAME:personal_site}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 10000
+  flyway:
+    enabled: true
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: ${SMTP_SSL:false}
+          starttls:
+            enable: ${SMTP_STARTTLS:true}
+            required: ${SMTP_STARTTLS:true}
+          connectiontimeout: 10000
+          timeout: 15000
+          writetimeout: 15000
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  admin:
+    username: ${APP_ADMIN_USERNAME:admin}
+    password: ${APP_ADMIN_PASSWORD:}
+  security:
+    cookie-secure: ${APP_COOKIE_SECURE:false}
+    session-hours: 12
+    cors-origin: ${APP_CORS_ORIGIN:http://localhost:3000}
+  ai:
+    sync-enabled: ${AI_SYNC_ENABLED:true}
+    sources:
+      - name: OpenAI
+        url: https://openai.com/news/rss.xml
+      - name: 量子位
+        url: https://www.qbitai.com/feed
+      - name: InfoQ
+        url: https://www.infoq.cn/feed
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: WARN

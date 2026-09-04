@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+disk_used="$(df -P /opt/personal-site | awk 'NR==2 {gsub(/%/,"",$5); print $5}')"
+memory_used="$(free | awk '/Mem:/ {printf "%d", ($3/$2)*100}')"
+
+if (( disk_used >= 80 )); then
+  logger -t personal-site-monitor "WARNING disk usage ${disk_used}% on /opt/personal-site"
+fi
+if (( memory_used >= 85 )); then
+  logger -t personal-site-monitor "WARNING memory usage ${memory_used}%"
+fi
+
+systemctl is-active --quiet personal-site-api || logger -t personal-site-monitor "ERROR personal-site-api is not active"
+systemctl is-active --quiet personal-site-web || logger -t personal-site-monitor "ERROR personal-site-web is not active"

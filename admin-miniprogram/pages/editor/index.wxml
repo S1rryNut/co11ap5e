@@ -1,0 +1,30 @@
+<view class="page">
+  <view class="field">
+    <text class="field-label">标题</text>
+    <input class="input" data-field="title" value="{{form.title}}" bindinput="input" />
+  </view>
+  <view class="field">
+    <text class="field-label">固定链接</text>
+    <input class="input" data-field="slug" value="{{form.slug}}" bindinput="input" placeholder="例如 my-article" />
+  </view>
+  <view class="field">
+    <text class="field-label">分类</text>
+    <picker mode="selector" range="{{['工程实践','AI 学习','项目复盘','杂谈']}}" bindchange="category">
+      <view class="input picker-value">{{form.category}}</view>
+    </picker>
+  </view>
+  <view class="field">
+    <text class="field-label">摘要</text>
+    <textarea class="textarea" data-field="excerpt" value="{{form.excerpt}}" bindinput="input" maxlength="320" />
+  </view>
+  <view class="field">
+    <text class="field-label">Markdown 正文</text>
+    <textarea class="textarea content" data-field="content" value="{{form.content}}" bindinput="input" />
+  </view>
+  <view class="switch-row">
+    <text>同步到主站</text>
+    <switch checked="{{form.published}}" bindchange="togglePublished" color="#1f883d" />
+  </view>
+  <view wx:if="{{message}}" class="message">{{message}}</view>
+  <button class="primary" loading="{{saving}}" bindtap="save">保存</button>
+</view>

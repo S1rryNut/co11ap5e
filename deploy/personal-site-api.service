@@ -1,0 +1,24 @@
+[Unit]
+Description=Personal Site Spring Boot API
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=personalsite
+Group=personalsite
+WorkingDirectory=/opt/personal-site/backend
+EnvironmentFile=/etc/personal-site/backend.env
+ExecStart=/usr/bin/java -Xms128m -Xmx512m -XX:MaxMetaspaceSize=128m -XX:+UseG1GC -jar /opt/personal-site/backend/app.jar
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=25
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/personal-site/data /opt/personal-site/uploads
+
+[Install]
+WantedBy=multi-user.target
+

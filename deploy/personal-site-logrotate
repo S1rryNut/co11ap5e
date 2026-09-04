@@ -1,0 +1,10 @@
+/var/log/personal-site/*.log {
+    daily
+    rotate 14
+    size 20M
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+}

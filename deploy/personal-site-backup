@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+umask 077
+
+backup_root="/var/backups/personal-site"
+daily_root="${backup_root}/daily"
+monthly_root="${backup_root}/monthly"
+stamp="$(date +%Y%m%dT%H%M%S)"
+month="$(date +%Y-%m)"
+work_dir="${daily_root}/.${stamp}.tmp"
+backup_dir="${daily_root}/${stamp}"
+verify_db="personal_site_verify_${$}"
+
+cleanup() {
+  runuser -u postgres -- dropdb --if-exists "$verify_db" >/dev/null 2>&1 || true
+  rm -rf "$work_dir"
+}
+trap cleanup EXIT
+
+install -d -o root -g postgres -m 0710 "$backup_root" "$daily_root" "$monthly_root"
+install -d -o postgres -g postgres -m 0700 "$work_dir"
+
+runuser -u postgres -- pg_dump --format=custom --compress=6 \
+  --file="${work_dir}/database.dump" personal_site
+test -s "${work_dir}/database.dump"
+runuser -u postgres -- pg_restore --list "${work_dir}/database.dump" >/dev/null
+
+if [[ -d /opt/personal-site/uploads ]]; then
+  tar -czf "${work_dir}/uploads.tar.gz" -C /opt/personal-site uploads
+else
+  tar -czf "${work_dir}/uploads.tar.gz" --files-from /dev/null
+fi
+tar -tzf "${work_dir}/uploads.tar.gz" >/dev/null
+
+runuser -u postgres -- createdb "$verify_db"
+runuser -u postgres -- pg_restore --no-owner --no-privileges \
+  --dbname="$verify_db" "${work_dir}/database.dump"
+runuser -u postgres -- psql --dbname="$verify_db" --tuples-only --no-align \
+  --command="SELECT COUNT(*) FROM flyway_schema_history" | grep -Eq '^[1-9][0-9]*$'
+runuser -u postgres -- dropdb "$verify_db"
+
+(
+  cd "$work_dir"
+  sha256sum database.dump uploads.tar.gz > SHA256SUMS
+)
+printf 'created_at=%s\ndatabase=personal_site\nrestore_verified=true\n' \
+  "$(date --iso-8601=seconds)" > "${work_dir}/metadata.txt"
+
+chown -R root:root "$work_dir"
+mv "$work_dir" "$backup_dir"
+
+if [[ "$(date +%d)" == "01" && ! -e "${monthly_root}/${month}" ]]; then
+  cp -a "$backup_dir" "${monthly_root}/${month}"
+fi
+
+find "$daily_root" -mindepth 1 -maxdepth 1 -type d -name '20????????T??????' -mtime +6 -exec rm -rf -- {} +
+find "$monthly_root" -mindepth 1 -maxdepth 1 -type d -name '20??-??' -mtime +365 -exec rm -rf -- {} +
+
+echo "Backup completed and restore-verified: ${backup_dir}"

@@ -1,0 +1,9 @@
+{
+  "desc": "Co11ap5e 个人管理台",
+  "rules": [
+    {
+      "action": "disallow",
+      "page": "*"
+    }
+  ]
+}

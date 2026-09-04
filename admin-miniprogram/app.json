@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/articles/index",
+    "pages/editor/index",
+    "pages/settings/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1f2328",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "Cls 管理台",
+    "backgroundColor": "#f6f8fa",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

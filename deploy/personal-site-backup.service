@@ -1,0 +1,18 @@
+[Unit]
+Description=Personal Site database and uploads backup
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/personal-site-backup
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/backups/personal-site
+ReadOnlyPaths=/opt/personal-site/uploads
+

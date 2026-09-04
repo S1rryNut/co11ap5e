@@ -1,0 +1,53 @@
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+frontend/node_modules/
+frontend/.nuxt/
+frontend/.output/
+backend/target/
+data/
+uploads/
+*.log
+
+
+# 小程序上传密钥与本地产物
+admin-miniprogram/ci/private.key
+artifacts/
+*.pem
+*.key
+
+# 本地 Node 运行时 / 构建备份 / 临时处理目录
+articles/node22/
+frontend/.output_bak_*/
+extracted/
+rewritten/
+
+# articles 根目录的本地调试脚本/截图/检查文件（文章正文在数据库，不入库）
+/articles/*.py
+/articles/*.sh
+/articles/*.sql
+/articles/*.html
+/articles/*.png
+/articles/*.json
+
+# 本地一次性验证/检查脚本（含线上服务器地址，不入库）
+frontend/verify-*.mjs
+test_*.sh
+diag_*.sh
+*.check.html
+articles/*_check.html
+articles/verify_*.py
+
+# 迁移脚本备份（含个人示例数据）
+articles/migrations_bak/
+
+# 本地数据库导出/学习内容备份（大文件或含个人数据）
+/*.sql
+learning_*.json
+learn_clean_*.json
+
+# 构建发布产物
+release-frontend-*.tar.gz
+personal-site-frontend-*.tar.gz

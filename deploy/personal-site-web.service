@@ -1,0 +1,22 @@
+[Unit]
+Description=Personal Site Nuxt Web
+After=network.target personal-site-api.service
+
+[Service]
+Type=simple
+User=personalsite
+Group=personalsite
+WorkingDirectory=/opt/personal-site/frontend
+EnvironmentFile=/etc/personal-site/frontend.env
+ExecStart=/usr/bin/node /opt/personal-site/frontend/server/index.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+
